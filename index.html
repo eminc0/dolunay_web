@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DolunAI | Intelligence in Orbit</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,6 +19,7 @@
             --text-muted: #94a3b8;
             --glass-bg: rgba(15, 23, 42, 0.6);
             --glass-border: rgba(255, 255, 255, 0.08);
+            --card-bg: rgba(15, 23, 42, 0.85);
         }
 
         body { 
@@ -62,7 +63,7 @@
             color: var(--accent-cyan); text-transform: uppercase; margin-top: 1.5rem; opacity: 0.8;
         }
 
-        /* --- YENİ MODERN SCROLL İŞARETİ (IŞIK HÜZMESİ) --- */
+        /* --- SCROLL İŞARETİ --- */
         .scroll-trigger-modern {
             position: absolute;
             bottom: 40px;
@@ -111,7 +112,7 @@
             100% { top: 100%; opacity: 0; }
         }
 
-        /* --- KART DESTESİ ALANI --- */
+        /* --- KART DESTESİ ALANI (MASAÜSTÜ İÇİN DEFAULT) --- */
         .deck-wrapper {
             height: 100vh;
             width: 100%;
@@ -298,31 +299,32 @@
         /* Eski scroll indikatörünü gizledik */
         .scroll-indicator { display: none; }
 
+        /* =========================================================================
+           SADECE MOBİL İÇİN DÜZELTMELER (768px ve altı)
+           Masaüstü stillerini bozmamak için "!important" kullanılmıştır.
+           ========================================================================= */
         @media (max-width: 768px) {
             .deck-wrapper { justify-content: center; padding: 0; }
-            .card { width: 90%; height: 60vh; padding: 1.5rem; }
             .hero-container h1 { font-size: 3.5rem; }
-            .final-grid { grid-template-columns: 1fr; gap: 3rem; text-align: center; }
-            .values-list { justify-content: center; }
-            .mission-box h2 { font-size: 2rem; }
             .cta-box { padding: 2rem; }
             .scroll-trigger-modern { bottom: 20px; }
-        }
 
-        /* --- MOBİL OPTİMİZASYON KODLARI (Style'ın en altına yapıştır) --- */
-        @media (max-width: 768px) {
+            /* MOBİL ÖZEL AYARLAR */
             .hero-container { padding-bottom: 60px; }
+            
+            /* Akışkan Yapı (Masaüstündeki pinning'i iptal et) */
             .main-scroll-area { padding: 2rem 5%; height: auto !important; }
             .deck-wrapper { height: auto !important; display: block !important; position: relative; }
     
+            /* Kartlar (Yandan gelmesi için ayarlandı) */
             .card {
-                position: relative !important;
+                position: relative !important; /* Masaüstündeki absolute'u iptal et */
                 width: 100% !important;
                 height: auto !important;
                 top: auto !important; 
                 left: auto !important;
-                opacity: 0; 
-                transform: translateX(50px);
+                opacity: 0; /* JS ile açılacak */
+                transform: translateX(50px); /* Sağdan gelmesi için */
                 margin-bottom: 2rem !important;
                 padding: 2rem 1.5rem !important;
                 box-shadow: 0 10px 30px rgba(0,0,0,0.5);
@@ -331,9 +333,13 @@
             .card h2 { font-size: 1.8rem; }
 
             .rnd-section { padding: 4rem 1.5rem !important; min-height: auto; }
+            .rnd-content h2 { font-size: 2.2rem; }
+            
             .final-section { padding: 4rem 1.5rem !important; display: block !important; min-height: auto; }
             .final-grid { display: flex !important; flex-direction: column; gap: 3rem; }
+            
             .mission-box { text-align: left !important; }
+            .mission-box h2 { font-size: 2rem; }
             .values-list { flex-wrap: wrap; }
             .mail-btn { width: 100%; font-size: 0.9rem; padding: 1rem; }
         }
@@ -472,31 +478,31 @@
         const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
         camera.position.z = 6;
 
-        // --- OPTİMİZASYON 1: ANTIALIAS KAPALI, POWER PREFERENCE ---
+        // CİHAZ TESPİTİ
+        const isMobile = window.innerWidth < 769;
+
+        // OPTİMİZASYON: Mobilde antialias kapat
         const renderer = new THREE.WebGLRenderer({ 
             canvas: canvas, 
             alpha: true, 
-            antialias: false, 
+            antialias: !isMobile, 
             powerPreference: "high-performance",
             stencil: false,
             depth: true
         });
         
         renderer.setSize(window.innerWidth, window.innerHeight);
-        
-        // --- OPTİMİZASYON 2: PİKSEL ORANI ---
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1 : 1.5));
 
-        const radius = 1.8;
-        const blackGeo = new THREE.SphereGeometry(radius * 0.85, 32, 32); 
+        // OPTİMİZASYON: Mobilde daha küçük ay
+        const radius = isMobile ? 1.1 : 1.8; 
+
+        const blackGeo = new THREE.SphereGeometry(radius * 0.85, 64, 64);
         const blackMat = new THREE.MeshBasicMaterial({ color: 0x020617 }); 
         const occluder = new THREE.Mesh(blackGeo, blackMat);
         scene.add(occluder);
 
-        // --- OPTİMİZASYON 3: MOBİL AYRIMI ---
-        const isMobile = window.innerWidth < 768;
-        const particlesCount = isMobile ? 3500 : 6500;
-
+        const particlesCount = 7500;
         const posSphere = new Float32Array(particlesCount * 3);
         const posCode = new Float32Array(particlesCount * 3);
         const posWire = new Float32Array(particlesCount * 3);
@@ -523,7 +529,7 @@
         let cIndex = 0;
         while(cIndex < particlesCount) {
             let x, y, z;
-            const thickness = 0.35; const scale = 0.6;
+            const thickness = 0.45; const scale = 0.6;
             const r = Math.random();
             if(r < 0.4) { 
                 const t = Math.random() * 2 - 1; 
@@ -587,6 +593,7 @@
             posKnot[i*3] = x * scale; posKnot[i*3+1] = y * scale; posKnot[i*3+2] = z * scale;
         }
 
+        // --- GPU GEOMETRİ ---
         const geometry = new THREE.BufferGeometry();
         geometry.setAttribute('position', new THREE.BufferAttribute(posSphere, 3)); 
         geometry.setAttribute('aPosSphere', new THREE.BufferAttribute(posSphere, 3));
@@ -643,14 +650,14 @@
                         float t = smoothstep(0.0, 1.0, uProgress - 3.0);
                         finalPos = mix(aPosDNA, aPosKnot, t);
                     }
-                    else { 
+                    else { // 4.0 -> 5.0 (Knot -> Sphere RESET)
                         float t = smoothstep(0.0, 1.0, uProgress - 4.0);
                         finalPos = mix(aPosKnot, aPosSphere, t);
-                        finalSize = mix(1.0, aSizeSphere, t);
+                        finalSize = mix(1.0, aSizeSphere, t); // Kraterli boyuta dön
                     }
 
-                    finalPos.x += sin(uTime + aRandom * 5.0) * 0.01;
-                    finalPos.y += cos(uTime * 0.8 + aRandom * 5.0) * 0.01;
+                    finalPos.x += sin(uTime * 1.5 + aRandom * 10.0) * 0.015;
+                    finalPos.y += cos(uTime * 1.0 + aRandom * 10.0) * 0.015;
 
                     vec4 mvPosition = modelViewMatrix * vec4(finalPos, 1.0);
                     gl_Position = projectionMatrix * mvPosition;
@@ -667,9 +674,7 @@
                 varying float vAlpha;
                 void main() {
                     float d = distance(gl_PointCoord, vec2(0.5));
-                    if(d > 0.5) discard;
-                    float strength = 1.0 - (d * 2.0);
-                    strength = strength * strength;
+                    float strength = pow(1.0 - d * 2.0, 3.0); 
                     gl_FragColor = vec4(uColor, strength * vAlpha);
                 }
             `
@@ -682,45 +687,122 @@
         scene.add(mainGroup);
 
 
-        // --- ANIMASYON KURGUSU (ESKİ KODUNU SİL, BUNU YAPIŞTIR) ---
-ScrollTrigger.matchMedia({
-    // >>> MASAÜSTÜ (SENİN HAZIRLADIĞIN KOD BURADA ÇALIŞIR) <<<
-    "(min-width: 769px)": function() {
-        const tl = gsap.timeline({ scrollTrigger: { trigger: ".main-scroll-area", start: "top top", end: "+=4000", pin: true, scrub: 1 } });
-        tl.to(".hero-container", { opacity: 0, y: -100, duration: 1 })
-          .to(mainGroup.position, { x: -2.5, duration: 2 }, "<")
-          .to(occluder.scale, { x: 0.001, y: 0.001, z: 0.001, duration: 1 }, "<")
-          .to(material.uniforms.uProgress, { value: 1.0, duration: 2 }, "<")
-          .to("#card-1", { top: "15%", opacity: 1, duration: 2 }, "-=1.5");
-        tl.to("#card-1", { scale: 0.95, opacity: 0.5, duration: 2 })
-          .to(material.uniforms.uProgress, { value: 2.0, duration: 2 }, "<")
-          .to("#card-2", { top: "18%", opacity: 1, duration: 2 }, "<");
-        tl.to("#card-2", { scale: 0.95, opacity: 0.5, duration: 2 })
-          .to(material.uniforms.uProgress, { value: 3.0, duration: 2 }, "<")
-          .to("#card-3", { top: "21%", opacity: 1, duration: 2 }, "<");
+        // --- ANIMASYON KURGUSU (MATCH MEDIA) ---
+        ScrollTrigger.matchMedia({
+            // >>> MASAÜSTÜ (SANA AİT KOD - DOKUNULMADI) <<<
+            "(min-width: 769px)": function() {
+                const tl = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: ".main-scroll-area",
+                        start: "top top",
+                        end: "+=4000",
+                        pin: true,
+                        scrub: 1,
+                    }
+                });
 
-        ScrollTrigger.create({ trigger: ".rnd-section", start: "top center", end: "bottom bottom", onEnter: () => { gsap.to(material.uniforms.uProgress, { value: 4.0, duration: 2 }); gsap.to(mainGroup.position, { x: 0, duration: 2 }); }, onLeaveBack: () => { gsap.to(material.uniforms.uProgress, { value: 3.0, duration: 2 }); gsap.to(mainGroup.position, { x: -2.5, duration: 2 }); } });
-        ScrollTrigger.create({ trigger: ".final-section", start: "top bottom", onEnter: () => { gsap.to(material.uniforms.uProgress, { value: 5.0, duration: 2.5 }); gsap.to(occluder.scale, { x: 1, y: 1, z: 1, duration: 1.5 }); }, onLeaveBack: () => { gsap.to(material.uniforms.uProgress, { value: 4.0, duration: 2 }); gsap.to(occluder.scale, { x: 0.001, y: 0.001, z: 0.001, duration: 1 }); } });
-        ScrollTrigger.create({ trigger: ".main-scroll-area", start: "top top", onLeaveBack: () => { gsap.to(mainGroup.position, { x: 0, duration: 1 }); gsap.to(occluder.scale, { x: 1, y: 1, z: 1, duration: 1 }); gsap.to(".hero-container", { opacity: 1, y: 0, duration: 1 }); } });
-    },
+                tl.to(".hero-container", { opacity: 0, y: -100, duration: 1 })
+                  .to(mainGroup.position, { x: -2.5, duration: 2 }, "<")
+                  .to(occluder.scale, { x: 0.001, y: 0.001, z: 0.001, duration: 1 }, "<")
+                  .to(material.uniforms.uProgress, { value: 1.0, duration: 2 }, "<")
+                  .to("#card-1", { top: "15%", opacity: 1, duration: 2 }, "-=1.5");
 
-    // >>> MOBİL (YENİ EKLEDİĞİMİZ KISIM) <<<
-    "(max-width: 768px)": function() {
-        gsap.to("canvas", { scrollTrigger: { trigger: ".hero-container", start: "center center", end: "bottom top", scrub: true }, opacity: 0 });
-        gsap.utils.toArray('.mobile-card').forEach((el, i) => {
-            gsap.to(el, { scrollTrigger: { trigger: el, start: "top 85%" }, x: 0, opacity: 1, duration: 0.8, ease: "power3.out", delay: i * 0.1 });
+                tl.to("#card-1", { scale: 0.95, opacity: 0.5, duration: 2 })
+                  .to(material.uniforms.uProgress, { value: 2.0, duration: 2 }, "<")
+                  .to("#card-2", { top: "18%", opacity: 1, duration: 2 }, "<");
+
+                tl.to("#card-2", { scale: 0.95, opacity: 0.5, duration: 2 })
+                  .to(material.uniforms.uProgress, { value: 3.0, duration: 2 }, "<")
+                  .to("#card-3", { top: "21%", opacity: 1, duration: 2 }, "<");
+
+                ScrollTrigger.create({
+                    trigger: ".rnd-section",
+                    start: "top center",
+                    end: "bottom bottom",
+                    onEnter: () => {
+                        gsap.to(material.uniforms.uProgress, { value: 4.0, duration: 2 });
+                        gsap.to(mainGroup.position, { x: 0, duration: 2 });
+                    },
+                    onLeaveBack: () => {
+                        gsap.to(material.uniforms.uProgress, { value: 3.0, duration: 2 });
+                        gsap.to(mainGroup.position, { x: -2.5, duration: 2 });
+                    }
+                });
+
+                ScrollTrigger.create({
+                    trigger: ".final-section",
+                    start: "top bottom",
+                    onEnter: () => {
+                        gsap.to(material.uniforms.uProgress, { value: 5.0, duration: 2.5 }); 
+                        gsap.to(occluder.scale, { x: 1, y: 1, z: 1, duration: 1.5 }); 
+                    },
+                    onLeaveBack: () => {
+                        gsap.to(material.uniforms.uProgress, { value: 4.0, duration: 2 });
+                        gsap.to(occluder.scale, { x: 0.001, y: 0.001, z: 0.001, duration: 1 });
+                    }
+                });
+
+                ScrollTrigger.create({
+                    trigger: ".main-scroll-area",
+                    start: "top top",
+                    onLeaveBack: () => {
+                        gsap.to(mainGroup.position, { x: 0, duration: 1 });
+                        gsap.to(occluder.scale, { x: 1, y: 1, z: 1, duration: 1 });
+                        gsap.to(".hero-container", { opacity: 1, y: 0, duration: 1 });
+                        gsap.to(material.uniforms.uProgress, { value: 0.0, duration: 1 });
+                    }
+                });
+            },
+
+            // >>> MOBİL (YENİ OPTİMİZASYON) <<<
+            "(max-width: 768px)": function() {
+                // 1. Dolunay Sönmesi (Canvas Fade Out)
+                gsap.to("canvas", {
+                    scrollTrigger: { 
+                        trigger: ".hero-container", 
+                        start: "center center", 
+                        end: "bottom top", 
+                        scrub: true 
+                    },
+                    opacity: 0
+                });
+
+                // 2. Kartlar Yandan Fışkırma (Slide-In)
+                gsap.utils.toArray('.mobile-card').forEach((el, i) => {
+                    gsap.to(el, {
+                        scrollTrigger: { 
+                            trigger: el, 
+                            start: "top 85%" 
+                        },
+                        x: 0, 
+                        opacity: 1, 
+                        duration: 0.8, 
+                        ease: "power3.out", 
+                        delay: i * 0.1
+                    });
+                });
+
+                // 3. Diğer Bölümler Fade-in
+                gsap.utils.toArray('.mobile-fade').forEach(el => {
+                    gsap.from(el, {
+                        scrollTrigger: { 
+                            trigger: el, 
+                            start: "top 90%" 
+                        },
+                        y: 30, 
+                        opacity: 0, 
+                        duration: 0.8, 
+                        ease: "power2.out"
+                    });
+                });
+            }
         });
-        gsap.utils.toArray('.mobile-fade').forEach(el => {
-            gsap.from(el, { scrollTrigger: { trigger: el, start: "top 90%" }, y: 30, opacity: 0, duration: 0.8, ease: "power2.out" });
-        });
-    }
-});
 
         const clock = new THREE.Clock();
         function tick() {
             const time = clock.getElapsedTime();
             mainGroup.rotation.y = time * 0.04; 
-            mainGroup.rotation.z = 0.1;
+            if(!isMobile) mainGroup.rotation.z = 0.1;
             material.uniforms.uTime.value = time;
             renderer.render(scene, camera);
             window.requestAnimationFrame(tick);
