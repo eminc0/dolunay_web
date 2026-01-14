@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DolunAI | Intelligence in Orbit</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Space+Grotesk:wght@300;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="Favicon.png">
+
+    <style>
+        :root {
+            --bg-color: #020617;
+            --accent-blue: #60a5fa; 
+            --accent-cyan: #2dd4bf;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --glass-bg: rgba(15, 23, 42, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        body { 
+            margin: 0; 
+            overflow-x: hidden; 
+            background: #020617; 
+            color: var(--text-main); 
+            font-family: 'Inter', sans-serif; 
+        }
+
+        canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1; }
+
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 2rem 5%; 
+            display: flex; justify-content: space-between; align-items: center; 
+            z-index: 1000; 
+            background: linear-gradient(to bottom, rgba(2,6,23,0.9), transparent);
+        }
+        .brand { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; font-weight: 800; letter-spacing: 2px; color: #fff; text-decoration: none;}
+        .brand span { color: var(--accent-blue); }
+
+        /* --- HERO --- */
+        .hero-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+        .hero-container h1 {
+            font-family: 'Orbitron', sans-serif; font-size: 5rem; font-weight: 900; letter-spacing: -2px; margin: 0;
+            background: linear-gradient(135deg, #e2e8f0 0%, #60a5fa 100%); 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 40px rgba(96, 165, 250, 0.4);
+        }
+        .hero-container p {
+            font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; letter-spacing: 6px; 
+            color: var(--accent-cyan); text-transform: uppercase; margin-top: 1.5rem; opacity: 0.8;
+        }
+
+        /* --- YENİ MODERN SCROLL İŞARETİ (IŞIK HÜZMESİ) --- */
+        .scroll-trigger-modern {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+            cursor: pointer;
+        }
+        .scroll-trigger-modern:hover { opacity: 1; }
+
+        .scroll-text {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scroll-line::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(to bottom, transparent, var(--accent-cyan));
+            animation: dropLight 2s cubic-bezier(0.77, 0, 0.175, 1) infinite;
+        }
+
+        @keyframes dropLight {
+            0% { top: -50%; opacity: 0; }
+            50% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        /* --- KART DESTESİ ALANI --- */
+        .deck-wrapper {
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end; 
+            padding-right: 10%;
+            position: relative;
+        }
+
+        .card {
+            position: absolute;
+            width: 450px;
+            height: 600px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-top: 1px solid rgba(255,255,255,0.2);
+            border-radius: 24px;
+            padding: 3rem 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            top: 120vh; 
+            opacity: 0;
+            display: flex; flex-direction: column; justify-content: space-between; overflow: hidden;
+        }
+
+        .card-number {
+            position: absolute; top: -20px; right: 20px;
+            font-family: 'Orbitron', sans-serif; font-size: 12rem; font-weight: 900;
+            color: rgba(255, 255, 255, 0.03); pointer-events: none;
+        }
+        .card-content { z-index: 1; position: relative; }
+        .card h2 { font-family: 'Orbitron', sans-serif; font-size: 2.2rem; margin-bottom: 1rem; color: #fff; line-height: 1.2; }
+        .card h2 span { color: var(--accent-blue); }
+        .card p { font-size: 1.1rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 2rem; }
+        .feature-list li { margin-bottom: 1rem; display: flex; align-items: center; color: #e2e8f0; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.5rem; }
+        .feature-list li::before { content: '▹'; color: var(--accent-cyan); margin-right: 12px; }
+
+        /* --- AR-GE BÖLÜMÜ --- */
+        .rnd-section {
+            position: relative;
+            padding: 10rem 10%; 
+            min-height: 80vh; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            z-index: 20; 
+            background-color: #020617; 
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .rnd-content { max-width: 800px; position: relative; }
+        .status-indicator {
+            display: inline-flex; align-items: center; margin-bottom: 2rem; padding: 0.5rem 1rem;
+            background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 99px;
+            color: #ef4444; font-family: 'Space Grotesk', sans-serif; font-size: 0.8rem; letter-spacing: 2px; font-weight: 700;
+        }
+        .status-dot { width: 8px; height: 8px; background: #ef4444; border-radius: 50%; margin-right: 10px; animation: blinkRed 1.5s infinite; }
+        @keyframes blinkRed { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .rnd-content h2 { font-family: 'Orbitron', sans-serif; font-size: 4rem; margin-bottom: 2rem; color: #fff; line-height: 1.1; }
+        .rnd-content h2 span { color: var(--text-muted); opacity: 0.5; }
+        .rnd-content p { font-size: 1.2rem; color: var(--text-muted); line-height: 1.8; border-left: 4px solid var(--accent-blue); padding-left: 2rem; }
+
+        /* --- FİNAL BÖLÜM: MİSYON & İLETİŞİM --- */
+        .final-section {
+            position: relative;
+            min-height: 100vh;
+            background: linear-gradient(to bottom, #020617, #02040a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5rem 10%;
+            z-index: 30;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .final-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            width: 100%;
+            max-width: 1200px;
+            position: relative;
+            z-index: 2; /* 3D kürenin önünde olsun */
+        }
+
+        /* SOL: MİSYON */
+        .mission-box h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            color: var(--accent-cyan);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            font-size: 1rem;
+            margin-bottom: 2rem;
+        }
+        .mission-box h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            color: #fff;
+            margin-bottom: 2rem;
+            line-height: 1.2;
+        }
+        .mission-box p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+        .values-list {
+            display: flex;
+            gap: 2rem;
+        }
+        .value-item span {
+            display: block;
+            font-size: 2rem;
+            color: var(--accent-blue);
+            margin-bottom: 0.5rem;
+        }
+        .value-item p {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #fff;
+            margin: 0;
+        }
+
+        /* SAĞ: DAVET (CTA) */
+        .cta-box {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 4rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            transition: transform 0.3s;
+        }
+        .cta-box:hover { transform: translateY(-5px); }
+
+        .cta-box h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: #fff;
+            margin-bottom: 1rem;
+        }
+        .cta-box p {
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+        }
+
+        .mail-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem 3rem;
+            background: rgba(96, 165, 250, 0.1);
+            border: 1px solid var(--accent-blue);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 12px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+        .mail-btn:hover {
+            background: var(--accent-blue);
+            color: #000;
+            box-shadow: 0 0 30px rgba(96, 165, 250, 0.4);
+        }
+
+        footer { 
+            position: absolute; 
+            bottom: 0; width: 100%; 
+            text-align: center; padding: 2rem; 
+            color: #475569; font-size: 0.85rem; 
+            border-top: 1px solid var(--glass-border); 
+        }
+
+        /* Eski scroll indikatörünü gizledik */
+        .scroll-indicator { display: none; }
+
+        @media (max-width: 768px) {
+            .deck-wrapper { justify-content: center; padding: 0; }
+            .card { width: 90%; height: 60vh; padding: 1.5rem; }
+            .hero-container h1 { font-size: 3.5rem; }
+            .final-grid { grid-template-columns: 1fr; gap: 3rem; text-align: center; }
+            .values-list { justify-content: center; }
+            .mission-box h2 { font-size: 2rem; }
+            .cta-box { padding: 2rem; }
+            .scroll-trigger-modern { bottom: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="#" class="brand">DOLUN<span>AI</span></a>
+    </nav>
+
+    <canvas id="webgl"></canvas>
+
+    <div class="hero-container">
+        <h1>DOLUNAI</h1>
+        <p>INTELLIGENCE IN ORBIT</p>
+
+        <div class="scroll-trigger-modern">
+            <span class="scroll-text">KEŞFET</span>
+            <div class="scroll-line"></div>
+        </div>
+    </div>
+
+    <div class="main-scroll-area">
+        <div class="deck-wrapper">
+            <div class="card" id="card-1">
+                <div class="card-number">01</div>
+                <div class="card-content">
+                    <h2>Yüksek Performanslı <br><span>Web Mimarisi</span></h2>
+                    <p>Dijital varlığınızın temellerini sağlam atıyoruz. Kodun en saf haliyle; ölçeklenebilir, hızlı ve estetik yapılar.</p>
+                    <ul class="feature-list">
+                        <li>Next.js & React Altyapısı</li>
+                        <li>Global Standartlarda UI/UX</li>
+                        <li>SEO & Performans Odaklı</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card" id="card-2">
+                <div class="card-number">02</div>
+                <div class="card-content">
+                    <h2>Akıllı Süreç <br><span>Otomasyonu</span></h2>
+                    <p>İş süreçlerinizi şeffaf ve yapılandırılmış bir sistem içinde, hatasız ve otonom olarak yönetiyoruz.</p>
+                    <ul class="feature-list">
+                        <li>Entegre CRM & ERP Sistemleri</li>
+                        <li>7/24 Çalışan Dijital İşçiler</li>
+                        <li>%100 Operasyonel Verimlilik</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card" id="card-3">
+                <div class="card-number">03</div>
+                <div class="card-content">
+                    <h2>Stratejik <br><span>Yapay Zeka</span></h2>
+                    <p>Veriden öğrenen, gelişen ve geleceğe adapte olan yaşayan sistemler. İşletmenizin genetiğini yapay zeka ile yeniden kodluyoruz.</p>
+                    <ul class="feature-list">
+                        <li>Özelleştirilmiş LLM & Chatbotlar</li>
+                        <li>Veri Analizi ve Öngörü Modelleri</li>
+                        <li>AI Destekli Karar Mekanizmaları</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="rnd-section">
+        <div class="rnd-content">
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                YÜKSEK ÖNCELİKLİ ÇALIŞMA
+            </div>
+            <h2>AR-GE <span>LABORATUVARI</span></h2>
+            <p>
+                DolunAI mühendislik ekibi olarak, endüstri standartlarını yeniden belirleyecek 
+                yeni nesil otonom sistemler ve ileri yapay zeka mimarileri üzerinde çalışıyoruz. 
+                <br><br>
+                Şu anda <strong>"Stealth Mode"</strong> (Gizli Mod) altında yürütülen projelerimiz, 
+                gerekli olgunluk seviyesine ulaştığında ve patent süreçleri tamamlandığında 
+                kamuoyu ile paylaşılacaktır. Geleceği inşa etmeye devam ediyoruz.
+            </p>
+        </div>
+    </section>
+
+    <section class="final-section">
+        <div class="final-grid">
+            
+            <div class="mission-box">
+                <h3>VİZYONUMUZ</h3>
+                <h2>Teknolojiyi Sadece Kullanmıyor, <br>Ona Yön Veriyoruz.</h2>
+                <p>Amacımız karmaşık problemleri, şık ve sürdürülebilir kod yapılarıyla çözmek. İşletmeniz için sadece bir yazılım değil, yaşayan bir dijital ekosistem kuruyoruz.</p>
+                
+                <div class="values-list">
+                    <div class="value-item">
+                        <span>✦</span>
+                        <p>Güvenilirlik</p>
+                    </div>
+                    <div class="value-item">
+                        <span>✦</span>
+                        <p>Gizlilik</p>
+                    </div>
+                    <div class="value-item">
+                        <span>✦</span>
+                        <p>Yenilik</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cta-box">
+                <h3>Geleceği Beklemeyin</h3>
+                <p>Fikriniz var mı? Ya da sadece bir kahve içip olasılıkları mı konuşmak istersiniz? Bizimle iletişime geçin.</p>
+                
+                <a href="mailto:dolunai.team@gmail.com" class="mail-btn">
+                    dolunai.team@gmail.com
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                </a>
+            </div>
+
+        </div>
+
+        <footer>
+            <p>© 2026 DolunAI Technology. All systems go.</p>
+        </footer>
+    </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        const canvas = document.querySelector('#webgl');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x020617, 0.035);
+
+        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 6;
+
+        // --- OPTİMİZASYON 1: ANTIALIAS KAPALI, POWER PREFERENCE ---
+        const renderer = new THREE.WebGLRenderer({ 
+            canvas: canvas, 
+            alpha: true, 
+            antialias: false, 
+            powerPreference: "high-performance",
+            stencil: false,
+            depth: true
+        });
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        
+        // --- OPTİMİZASYON 2: PİKSEL ORANI ---
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+
+        const radius = 1.8;
+        const blackGeo = new THREE.SphereGeometry(radius * 0.85, 32, 32); 
+        const blackMat = new THREE.MeshBasicMaterial({ color: 0x020617 }); 
+        const occluder = new THREE.Mesh(blackGeo, blackMat);
+        scene.add(occluder);
+
+        // --- OPTİMİZASYON 3: MOBİL AYRIMI ---
+        const isMobile = window.innerWidth < 768;
+        const particlesCount = isMobile ? 3500 : 6500;
+
+        const posSphere = new Float32Array(particlesCount * 3);
+        const posCode = new Float32Array(particlesCount * 3);
+        const posWire = new Float32Array(particlesCount * 3);
+        const posDNA = new Float32Array(particlesCount * 3);
+        const posKnot = new Float32Array(particlesCount * 3);
+        const sizesSphere = new Float32Array(particlesCount);
+        const simplex = new SimplexNoise();
+
+        // 1. DOLUNAY
+        for(let i = 0; i < particlesCount; i++) {
+            const phi = Math.acos(1 - 2 * (i + 0.5) / particlesCount);
+            const theta = Math.PI * (1 + Math.sqrt(5)) * (i + 0.5);
+            let x = radius * Math.cos(theta) * Math.sin(phi);
+            let y = radius * Math.sin(theta) * Math.sin(phi);
+            let z = radius * Math.cos(phi);
+            const noise = simplex.noise3D(x * 0.6, y * 0.6, z * 0.6);
+            let size = 1.0;
+            if (noise > 0.55) { size = 0.2; x*=0.99; y*=0.99; z*=0.99; }
+            posSphere[i*3] = x; posSphere[i*3+1] = y; posSphere[i*3+2] = z;
+            sizesSphere[i] = size;
+        }
+
+        // 2. CODE TAG
+        let cIndex = 0;
+        while(cIndex < particlesCount) {
+            let x, y, z;
+            const thickness = 0.35; const scale = 0.6;
+            const r = Math.random();
+            if(r < 0.4) { 
+                const t = Math.random() * 2 - 1; 
+                x = (-2.5 + Math.abs(t) + (Math.random()-0.5)*thickness) * scale;
+                y = (t * 1.5 + (Math.random()-0.5)*thickness) * scale;
+                z = ((Math.random()-0.5)*thickness * 2) * scale;
+            } else if (r < 0.66) { 
+                const t = Math.random() * 2 - 1; 
+                x = (t * 0.8 + (Math.random()-0.5)*thickness) * scale;
+                y = (t * 1.8 + (Math.random()-0.5)*thickness) * scale;
+                z = ((Math.random()-0.5)*thickness * 2) * scale;
+            } else { 
+                const t = Math.random() * 2 - 1;
+                x = (2.5 - Math.abs(t) + (Math.random()-0.5)*thickness) * scale;
+                y = (t * 1.5 + (Math.random()-0.5)*thickness) * scale;
+                z = ((Math.random()-0.5)*thickness * 2) * scale;
+            }
+            posCode[cIndex*3] = x; posCode[cIndex*3+1] = y; posCode[cIndex*3+2] = z;
+            cIndex++;
+        }
+
+        // 3. WIREFRAME KÜP
+        const cubeSide = 2.0; 
+        const corners = [new THREE.Vector3(-cubeSide/2, -cubeSide/2, -cubeSide/2), new THREE.Vector3(cubeSide/2, -cubeSide/2, -cubeSide/2), new THREE.Vector3(cubeSide/2, cubeSide/2, -cubeSide/2), new THREE.Vector3(-cubeSide/2, cubeSide/2, -cubeSide/2), new THREE.Vector3(-cubeSide/2, -cubeSide/2, cubeSide/2), new THREE.Vector3(cubeSide/2, -cubeSide/2, cubeSide/2), new THREE.Vector3(cubeSide/2, cubeSide/2, cubeSide/2), new THREE.Vector3(-cubeSide/2, cubeSide/2, cubeSide/2)];
+        const edges = [[0,1], [1,2], [2,3], [3,0], [4,5], [5,6], [6,7], [7,4], [0,4], [1,5], [2,6], [3,7]];
+        for(let i=0; i<particlesCount; i++) {
+            const edgeIndex = Math.floor(Math.random() * edges.length);
+            const start = corners[edges[edgeIndex][0]];
+            const end = corners[edges[edgeIndex][1]];
+            const alpha = Math.random();
+            const jitter = 0.25;
+            posWire[i*3] = start.x + (end.x - start.x) * alpha + (Math.random()-0.5)*jitter;
+            posWire[i*3+1] = start.y + (end.y - start.y) * alpha + (Math.random()-0.5)*jitter;
+            posWire[i*3+2] = start.z + (end.z - start.z) * alpha + (Math.random()-0.5)*jitter;
+        }
+
+        // 4. DNA SARMALI
+        for(let i=0; i<particlesCount; i++) {
+            const t = (i / particlesCount) * 4 - 2; 
+            const angle = t * 3.5; const dnaR = 1.0; 
+            const offset = (i % 2 === 0) ? 0 : Math.PI;
+            let x = Math.cos(angle + offset) * dnaR;
+            let y = t * 1.5; 
+            let z = Math.sin(angle + offset) * dnaR;
+            const th = 0.2;
+            x += (Math.random() - 0.5) * th; y += (Math.random() - 0.5) * th; z += (Math.random() - 0.5) * th;
+            if(i % 20 === 0) { x *= Math.random(); z *= Math.random(); }
+            posDNA[i*3] = x; posDNA[i*3+1] = y; posDNA[i*3+2] = z;
+        }
+
+        // 5. TORUS KNOT
+        for(let i=0; i<particlesCount; i++) {
+            const t = (i / particlesCount) * Math.PI * 2 * 3; 
+            const scale = 0.7;
+            const p = 2; const q = 3;
+            const r = 1.5 + Math.cos(q * t) * 0.5;
+            let x = r * Math.cos(p * t);
+            let y = r * Math.sin(p * t);
+            let z = Math.sin(q * t) * 0.8;
+            x += (Math.random()-0.5)*0.3; y += (Math.random()-0.5)*0.3; z += (Math.random()-0.5)*0.3;
+            posKnot[i*3] = x * scale; posKnot[i*3+1] = y * scale; posKnot[i*3+2] = z * scale;
+        }
+
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.BufferAttribute(posSphere, 3)); 
+        geometry.setAttribute('aPosSphere', new THREE.BufferAttribute(posSphere, 3));
+        geometry.setAttribute('aPosCode', new THREE.BufferAttribute(posCode, 3));
+        geometry.setAttribute('aPosWire', new THREE.BufferAttribute(posWire, 3));
+        geometry.setAttribute('aPosDNA', new THREE.BufferAttribute(posDNA, 3));
+        geometry.setAttribute('aPosKnot', new THREE.BufferAttribute(posKnot, 3));
+        geometry.setAttribute('aSizeSphere', new THREE.BufferAttribute(sizesSphere, 1)); 
+        const randoms = new Float32Array(particlesCount);
+        for(let i=0; i<particlesCount; i++) randoms[i] = Math.random();
+        geometry.setAttribute('aRandom', new THREE.BufferAttribute(randoms, 1));
+
+        const material = new THREE.ShaderMaterial({
+            uniforms: {
+                uTime: { value: 0 },
+                uProgress: { value: 0 },
+                uColor: { value: new THREE.Color(0x60a5fa) },
+                uPixelRatio: { value: Math.min(window.devicePixelRatio, 1.5) }
+            },
+            transparent: true,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending,
+            vertexShader: `
+                uniform float uTime;
+                uniform float uProgress;
+                uniform float uPixelRatio;
+                attribute float aRandom;
+                attribute vec3 aPosSphere;
+                attribute vec3 aPosCode;
+                attribute vec3 aPosWire;
+                attribute vec3 aPosDNA;
+                attribute vec3 aPosKnot;
+                attribute float aSizeSphere;
+                varying float vAlpha;
+
+                void main() {
+                    vec3 finalPos;
+                    float finalSize = 1.0;
+
+                    if(uProgress <= 1.0) {
+                        float t = smoothstep(0.0, 1.0, uProgress);
+                        finalPos = mix(aPosSphere, aPosCode, t);
+                        finalSize = mix(aSizeSphere, 1.0, t);
+                    } 
+                    else if(uProgress <= 2.0) {
+                        float t = smoothstep(0.0, 1.0, uProgress - 1.0);
+                        finalPos = mix(aPosCode, aPosWire, t);
+                    } 
+                    else if(uProgress <= 3.0) {
+                        float t = smoothstep(0.0, 1.0, uProgress - 2.0);
+                        finalPos = mix(aPosWire, aPosDNA, t);
+                    }
+                    else if(uProgress <= 4.0) {
+                        float t = smoothstep(0.0, 1.0, uProgress - 3.0);
+                        finalPos = mix(aPosDNA, aPosKnot, t);
+                    }
+                    else { 
+                        float t = smoothstep(0.0, 1.0, uProgress - 4.0);
+                        finalPos = mix(aPosKnot, aPosSphere, t);
+                        finalSize = mix(1.0, aSizeSphere, t);
+                    }
+
+                    finalPos.x += sin(uTime + aRandom * 5.0) * 0.01;
+                    finalPos.y += cos(uTime * 0.8 + aRandom * 5.0) * 0.01;
+
+                    vec4 mvPosition = modelViewMatrix * vec4(finalPos, 1.0);
+                    gl_Position = projectionMatrix * mvPosition;
+
+                    float baseSize = 35.0 * finalSize;
+                    gl_PointSize = (baseSize * aRandom + 10.0 * finalSize) * uPixelRatio;
+                    gl_PointSize *= (1.0 / -mvPosition.z);
+
+                    vAlpha = (0.5 + 0.5 * sin(uTime * 2.0 + aRandom * 100.0)) * finalSize;
+                }
+            `,
+            fragmentShader: `
+                uniform vec3 uColor;
+                varying float vAlpha;
+                void main() {
+                    float d = distance(gl_PointCoord, vec2(0.5));
+                    if(d > 0.5) discard;
+                    float strength = 1.0 - (d * 2.0);
+                    strength = strength * strength;
+                    gl_FragColor = vec4(uColor, strength * vAlpha);
+                }
+            `
+        });
+
+        const particlesMesh = new THREE.Points(geometry, material);
+        const mainGroup = new THREE.Group();
+        mainGroup.add(particlesMesh);
+        mainGroup.add(occluder);
+        scene.add(mainGroup);
+
+
+        const tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: ".main-scroll-area",
+                start: "top top",
+                end: "+=4000",
+                pin: true,
+                scrub: 1,
+            }
+        });
+
+        tl.to(".hero-container", { opacity: 0, y: -100, duration: 1 })
+          .to(mainGroup.position, { x: -2.5, duration: 2 }, "<")
+          .to(occluder.scale, { x: 0.001, y: 0.001, z: 0.001, duration: 1 }, "<")
+          .to(material.uniforms.uProgress, { value: 1.0, duration: 2 }, "<")
+          .to("#card-1", { top: "15%", opacity: 1, duration: 2 }, "-=1.5");
+
+        tl.to("#card-1", { scale: 0.95, opacity: 0.5, duration: 2 })
+          .to(material.uniforms.uProgress, { value: 2.0, duration: 2 }, "<")
+          .to("#card-2", { top: "18%", opacity: 1, duration: 2 }, "<");
+
+        tl.to("#card-2", { scale: 0.95, opacity: 0.5, duration: 2 })
+          .to(material.uniforms.uProgress, { value: 3.0, duration: 2 }, "<")
+          .to("#card-3", { top: "21%", opacity: 1, duration: 2 }, "<");
+
+        ScrollTrigger.create({
+            trigger: ".rnd-section",
+            start: "top center",
+            end: "bottom bottom",
+            onEnter: () => {
+                gsap.to(material.uniforms.uProgress, { value: 4.0, duration: 2 });
+                gsap.to(mainGroup.position, { x: 0, duration: 2 });
+            },
+            onLeaveBack: () => {
+                gsap.to(material.uniforms.uProgress, { value: 3.0, duration: 2 });
+                gsap.to(mainGroup.position, { x: -2.5, duration: 2 });
+            }
+        });
+
+        ScrollTrigger.create({
+            trigger: ".final-section",
+            start: "top bottom",
+            onEnter: () => {
+                gsap.to(material.uniforms.uProgress, { value: 5.0, duration: 2.5 }); 
+                gsap.to(occluder.scale, { x: 1, y: 1, z: 1, duration: 1.5 });
+            },
+            onLeaveBack: () => {
+                gsap.to(material.uniforms.uProgress, { value: 4.0, duration: 2 });
+                gsap.to(occluder.scale, { x: 0.001, y: 0.001, z: 0.001, duration: 1 });
+            }
+        });
+
+        ScrollTrigger.create({
+            trigger: ".main-scroll-area",
+            start: "top top",
+            onLeaveBack: () => {
+                gsap.to(mainGroup.position, { x: 0, duration: 1 });
+                gsap.to(occluder.scale, { x: 1, y: 1, z: 1, duration: 1 });
+                gsap.to(".hero-container", { opacity: 1, y: 0, duration: 1 });
+                gsap.to(material.uniforms.uProgress, { value: 0.0, duration: 1 });
+            }
+        });
+
+        const clock = new THREE.Clock();
+        function tick() {
+            const time = clock.getElapsedTime();
+            mainGroup.rotation.y = time * 0.04; 
+            mainGroup.rotation.z = 0.1;
+            material.uniforms.uTime.value = time;
+            renderer.render(scene, camera);
+            window.requestAnimationFrame(tick);
+        }
+        tick();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+        });
+
+    </script>
+</body>
+</html>
