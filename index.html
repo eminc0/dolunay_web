@@ -41,6 +41,7 @@
         .brand { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; font-weight: 800; letter-spacing: 2px; color: #fff; text-decoration: none;}
         .brand span { color: var(--accent-blue); }
 
+        /* HERO */
         .hero-container {
             height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: relative; z-index: 10; padding: 0 1.5rem;
         }
@@ -55,6 +56,7 @@
             color: var(--accent-cyan); text-transform: uppercase; margin-top: 1.5rem; opacity: 0.8;
         }
 
+        /* SCROLL TRIGGER */
         .scroll-trigger-modern {
             position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
             display: flex; flex-direction: column; align-items: center; opacity: 0.7; cursor: pointer; padding: 20px;
@@ -96,45 +98,25 @@
         .cta-box p { color: var(--text-muted); margin-bottom: 3rem; }
         .mail-btn { display: inline-flex; align-items: center; justify-content: center; gap: 1rem; padding: 1.5rem 3rem; background: rgba(96, 165, 250, 0.1); border: 1px solid var(--accent-blue); color: #fff; text-decoration: none; border-radius: 12px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; transition: all 0.3s ease; }
         .mail-btn:hover { background: var(--accent-blue); color: #000; box-shadow: 0 0 30px rgba(96, 165, 250, 0.4); }
-        
-        /* Footer Genel */
         footer { padding: 3rem 1rem; text-align: center; color: #475569; font-size: 0.85rem; border-top: 1px solid var(--glass-border); position: absolute; bottom: 0; width: 100%; }
 
 
         /* ====================================================================
-           MASAÜSTÜ AYARLARI (769px ve üzeri)
+           MASAÜSTÜ AYARLARI (769px ve üzeri) - DOKUNULMAZ
            ==================================================================== */
         @media (min-width: 769px) {
             .deck-wrapper { 
-                height: 100vh; 
-                width: 100%; 
-                display: flex; 
-                align-items: center; 
-                justify-content: flex-end; 
-                padding-right: 10%; 
-                position: relative;
+                height: 100vh; width: 100%; 
+                display: flex; align-items: center; justify-content: flex-end; 
+                padding-right: 10%; position: relative;
             }
             .card { 
-                position: absolute; 
-                width: 450px; 
-                height: 600px; 
-                top: 120vh;
-                opacity: 0; 
-                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+                position: absolute; width: 450px; height: 600px; top: 120vh;
+                opacity: 0; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
             }
             .card-number { font-family: 'Orbitron', sans-serif; font-weight: 900; color: rgba(255, 255, 255, 0.03); pointer-events: none; position: absolute; font-size: 12rem; top: -20px; right: 20px; }
-            
-            /* Masaüstü Ar-Ge */
             .rnd-section { padding: 10rem 10%; min-height: 80vh; display: flex; flex-direction: column; justify-content: center; }
-            
-            /* Masaüstü Vizyon - Footer için Alt Boşluk Eklendi (DÜZELTİLDİ) */
-            .final-section { 
-                min-height: 100vh; 
-                display: flex; 
-                align-items: center; 
-                justify-content: center; 
-                padding: 5rem 10% 120px 10%; /* Alt padding artırıldı ki footer'a binmesin */
-            }
+            .final-section { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 5rem 10% 120px 10%; }
             .final-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; max-width: 1200px; width: 100%; }
             .values-list { display: flex; gap: 2rem; }
             .value-item span { display: block; font-size: 2rem; color: var(--accent-blue); margin-bottom: 0.5rem; }
@@ -151,16 +133,10 @@
             .deck-wrapper { height: auto !important; display: block !important; position: relative; }
     
             .card {
-                position: relative !important;
-                width: 100% !important;
-                height: auto !important;
-                top: auto !important; 
-                left: auto !important;
-                opacity: 0; 
-                transform: translateX(50px);
-                margin-bottom: 2rem !important;
-                padding: 2rem 1.5rem !important;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+                position: relative !important; width: 100% !important; height: auto !important;
+                top: auto !important; left: auto !important; opacity: 0; 
+                transform: translateX(50px); margin-bottom: 2rem !important;
+                padding: 2rem 1.5rem !important; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             }
             .card-number { font-size: 4rem !important; top: 10px; right: 10px; }
             .card h2 { font-size: 1.8rem; }
@@ -176,21 +152,26 @@
             .mission-box { text-align: center !important; }
             .mission-box h2 { font-size: 1.8rem; }
             
-            /* --- MOBİL İÇİN YAN YANA YAZMA DÜZELTMESİ --- */
+            /* --- MOBİL İÇİN YAN YANA GÜVENLİK/GİZLİLİK/YENİLİK --- */
             .values-list { 
+                display: flex !important;
                 flex-direction: row !important; /* Yan yana zorla */
                 justify-content: center !important; 
-                flex-wrap: nowrap !important; /* Alt satıra inmesin */
-                gap: 15px !important; 
+                flex-wrap: nowrap !important; /* Alt satıra asla inmesin */
+                gap: 15px !important; /* Aralarında boşluk */
+                width: 100%;
             }
+            
             .value-item { 
                 display: flex; 
                 flex-direction: column; 
                 align-items: center; 
-                width: auto !important;
+                text-align: center;
+                flex: 1; /* Eşit alan kaplasınlar */
             }
-            .value-item span { font-size: 1.5rem; margin-bottom: 0.2rem; }
-            .value-item p { font-size: 0.8rem; font-weight: 600; white-space: nowrap; } /* Yazı küçüldü ve tek satır */
+            
+            .value-item span { font-size: 1.8rem; margin-bottom: 0.5rem; }
+            .value-item p { font-size: 0.75rem; font-weight: 700; white-space: nowrap; } /* Yazı küçük ve tek satır */
             
             .cta-box { padding: 2rem; margin-top: 1rem; }
             .mail-btn { width: 100%; font-size: 0.9rem; padding: 1rem; }
@@ -297,9 +278,7 @@
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:8px"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                 </a>
             </div>
-
         </div>
-
         <footer>
             <p>© 2026 DolunAI Technology. All systems go.</p>
         </footer>
@@ -320,10 +299,7 @@
         const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
         camera.position.z = 6;
 
-        // CİHAZ TESPİTİ
         const isMobile = window.innerWidth < 769;
-
-        // OPTİMİZASYON: Mobilde antialias kapat
         const renderer = new THREE.WebGLRenderer({ 
             canvas: canvas, 
             alpha: true, 
@@ -336,7 +312,6 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1 : 1.5));
 
-        // OPTİMİZASYON: Mobilde daha küçük ay
         const radius = isMobile ? 1.1 : 1.8; 
 
         const blackGeo = new THREE.SphereGeometry(radius * 0.85, isMobile ? 32 : 64, isMobile ? 32 : 64);
@@ -456,21 +431,12 @@
 
             // >>> MOBİL <<<
             "(max-width: 768px)": function() {
-                gsap.to("canvas", {
-                    scrollTrigger: { trigger: ".hero-container", start: "center center", end: "bottom top", scrub: true },
-                    opacity: 0
-                });
+                gsap.to("canvas", { scrollTrigger: { trigger: ".hero-container", start: "center center", end: "bottom top", scrub: true }, opacity: 0 });
                 gsap.utils.toArray('.mobile-card').forEach((el, i) => {
-                    gsap.to(el, {
-                        scrollTrigger: { trigger: el, start: "top 85%" },
-                        x: 0, opacity: 1, duration: 0.8, ease: "power3.out", delay: i * 0.1
-                    });
+                    gsap.to(el, { scrollTrigger: { trigger: el, start: "top 85%" }, x: 0, opacity: 1, duration: 0.8, ease: "power3.out", delay: i * 0.1 });
                 });
                 gsap.utils.toArray('.mobile-fade').forEach(el => {
-                    gsap.from(el, {
-                        scrollTrigger: { trigger: el, start: "top 90%" },
-                        y: 30, opacity: 0, duration: 0.8, ease: "power2.out"
-                    });
+                    gsap.from(el, { scrollTrigger: { trigger: el, start: "top 90%" }, y: 30, opacity: 0, duration: 0.8, ease: "power2.out" });
                 });
             }
         });
