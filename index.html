@@ -34,14 +34,13 @@
         canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1; pointer-events: none; transition: opacity 0.5s ease; }
 
         nav {
-            position: fixed; top: 0; width: 100%; padding: 2rem 5%; 
+            position: fixed; top: 0; width: 100%; padding: 1.5rem 5%; 
             display: flex; justify-content: space-between; align-items: center; 
             z-index: 1000; background: linear-gradient(to bottom, rgba(2,6,23,0.95), transparent);
         }
         .brand { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; font-weight: 800; letter-spacing: 2px; color: #fff; text-decoration: none;}
         .brand span { color: var(--accent-blue); }
 
-        /* HERO */
         .hero-container {
             height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: relative; z-index: 10; padding: 0 1.5rem;
         }
@@ -56,7 +55,6 @@
             color: var(--accent-cyan); text-transform: uppercase; margin-top: 1.5rem; opacity: 0.8;
         }
 
-        /* SCROLL TRIGGER */
         .scroll-trigger-modern {
             position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
             display: flex; flex-direction: column; align-items: center; opacity: 0.7; cursor: pointer; padding: 20px;
@@ -98,11 +96,13 @@
         .cta-box p { color: var(--text-muted); margin-bottom: 3rem; }
         .mail-btn { display: inline-flex; align-items: center; justify-content: center; gap: 1rem; padding: 1.5rem 3rem; background: rgba(96, 165, 250, 0.1); border: 1px solid var(--accent-blue); color: #fff; text-decoration: none; border-radius: 12px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; transition: all 0.3s ease; }
         .mail-btn:hover { background: var(--accent-blue); color: #000; box-shadow: 0 0 30px rgba(96, 165, 250, 0.4); }
-        footer { padding: 3rem 1rem; text-align: center; color: #475569; font-size: 0.85rem; border-top: 1px solid var(--glass-border); }
+        
+        /* Footer Genel */
+        footer { padding: 3rem 1rem; text-align: center; color: #475569; font-size: 0.85rem; border-top: 1px solid var(--glass-border); position: absolute; bottom: 0; width: 100%; }
 
 
         /* ====================================================================
-           MASAÜSTÜ AYARLARI (769px ve üzeri) - !IMPORTANT KİLİDİ AÇILDI
+           MASAÜSTÜ AYARLARI (769px ve üzeri)
            ==================================================================== */
         @media (min-width: 769px) {
             .deck-wrapper { 
@@ -127,8 +127,14 @@
             /* Masaüstü Ar-Ge */
             .rnd-section { padding: 10rem 10%; min-height: 80vh; display: flex; flex-direction: column; justify-content: center; }
             
-            /* Masaüstü Vizyon - HİZALAMA DÜZELTİLDİ */
-            .final-section { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 5rem 10%; }
+            /* Masaüstü Vizyon - Footer için Alt Boşluk Eklendi (DÜZELTİLDİ) */
+            .final-section { 
+                min-height: 100vh; 
+                display: flex; 
+                align-items: center; 
+                justify-content: center; 
+                padding: 5rem 10% 120px 10%; /* Alt padding artırıldı ki footer'a binmesin */
+            }
             .final-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; max-width: 1200px; width: 100%; }
             .values-list { display: flex; gap: 2rem; }
             .value-item span { display: block; font-size: 2rem; color: var(--accent-blue); margin-bottom: 0.5rem; }
@@ -140,6 +146,7 @@
         @media (max-width: 768px) {
             .hero-container { padding-bottom: 60px; }
             .hero-container h1 { font-size: 3.5rem; }
+            
             .main-scroll-area { padding: 2rem 5%; height: auto !important; }
             .deck-wrapper { height: auto !important; display: block !important; position: relative; }
     
@@ -163,17 +170,32 @@
             .rnd-content p { font-size: 1rem; border-left: none !important; padding-left: 0 !important; line-height: 1.6; }
             .status-indicator { margin: 0 auto 1.5rem auto !important; }
 
-            .final-section { padding: 3rem 1.5rem 6rem 1.5rem !important; display: block !important; min-height: auto; }
+            .final-section { padding: 3rem 1.5rem 8rem 1.5rem !important; display: block !important; min-height: auto; }
             .final-grid { display: flex !important; flex-direction: column; gap: 3rem; }
             
             .mission-box { text-align: center !important; }
             .mission-box h2 { font-size: 1.8rem; }
-            .values-list { justify-content: center !important; flex-wrap: wrap; gap: 1.5rem; }
-            .value-item { display: flex; flex-direction: column; align-items: center; }
+            
+            /* --- MOBİL İÇİN YAN YANA YAZMA DÜZELTMESİ --- */
+            .values-list { 
+                flex-direction: row !important; /* Yan yana zorla */
+                justify-content: center !important; 
+                flex-wrap: nowrap !important; /* Alt satıra inmesin */
+                gap: 15px !important; 
+            }
+            .value-item { 
+                display: flex; 
+                flex-direction: column; 
+                align-items: center; 
+                width: auto !important;
+            }
             .value-item span { font-size: 1.5rem; margin-bottom: 0.2rem; }
+            .value-item p { font-size: 0.8rem; font-weight: 600; white-space: nowrap; } /* Yazı küçüldü ve tek satır */
             
             .cta-box { padding: 2rem; margin-top: 1rem; }
             .mail-btn { width: 100%; font-size: 0.9rem; padding: 1rem; }
+            
+            footer { position: absolute; bottom: 0; }
         }
     </style>
 </head>
@@ -260,31 +282,19 @@
             <div class="mission-box">
                 <h3>VİZYONUMUZ</h3>
                 <h2>Teknolojiyi Sadece Kullanmıyor, <br>Ona Yön Veriyoruz.</h2>
-                <p>Amacımız karmaşık problemleri, şık ve sürdürülebilir kod yapılarıyla çözmek. İşletmeniz için sadece bir yazılım değil, yaşayan bir dijital ekosistem kuruyoruz.</p>
-                
                 <div class="values-list">
-                    <div class="value-item">
-                        <span>✦</span>
-                        <p>Güvenilirlik</p>
-                    </div>
-                    <div class="value-item">
-                        <span>✦</span>
-                        <p>Gizlilik</p>
-                    </div>
-                    <div class="value-item">
-                        <span>✦</span>
-                        <p>Yenilik</p>
-                    </div>
+                    <div class="value-item"><span>✦</span><p>Güvenilirlik</p></div>
+                    <div class="value-item"><span>✦</span><p>Gizlilik</p></div>
+                    <div class="value-item"><span>✦</span><p>Yenilik</p></div>
                 </div>
             </div>
 
             <div class="cta-box">
                 <h3>Geleceği Beklemeyin</h3>
-                <p>Fikriniz var mı? Ya da sadece bir kahve içip olasılıkları mı konuşmak istersiniz? Bizimle iletişime geçin.</p>
-                
+                <p>Bir kahve içip olasılıkları konuşalım.</p>
                 <a href="mailto:dolunai.team@gmail.com" class="mail-btn">
                     dolunai.team@gmail.com
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:8px"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                 </a>
             </div>
 
@@ -310,8 +320,10 @@
         const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
         camera.position.z = 6;
 
-        // OPTİMİZASYON: Mobilde antialias kapat
+        // CİHAZ TESPİTİ
         const isMobile = window.innerWidth < 769;
+
+        // OPTİMİZASYON: Mobilde antialias kapat
         const renderer = new THREE.WebGLRenderer({ 
             canvas: canvas, 
             alpha: true, 
@@ -386,7 +398,9 @@
                 uColor: { value: new THREE.Color(0x60a5fa) },
                 uPixelRatio: { value: Math.min(window.devicePixelRatio, 1.5) }
             },
-            transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+            transparent: true,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending,
             vertexShader: isMobile ? `
                 uniform float uTime; uniform float uPixelRatio; attribute float aRandom; attribute float aSizeSphere; varying float vAlpha;
                 void main() {
@@ -420,7 +434,7 @@
         scene.add(mainGroup);
 
         ScrollTrigger.matchMedia({
-            // >>> MASAÜSTÜ (SANA AİT KOD - KORUNDU) <<<
+            // >>> MASAÜSTÜ <<<
             "(min-width: 769px)": function() {
                 const tl = gsap.timeline({ scrollTrigger: { trigger: ".main-scroll-area", start: "top top", end: "+=4000", pin: true, scrub: 1 } });
                 tl.to(".hero-container", { opacity: 0, y: -100, duration: 1 })
@@ -440,23 +454,18 @@
                 ScrollTrigger.create({ trigger: ".main-scroll-area", start: "top top", onLeaveBack: () => { gsap.to(mainGroup.position, { x: 0, duration: 1 }); gsap.to(occluder.scale, { x: 1, y: 1, z: 1, duration: 1 }); gsap.to(".hero-container", { opacity: 1, y: 0, duration: 1 }); } });
             },
 
-            // >>> MOBİL (YENİ EKLEDİĞİMİZ KISIM) <<<
+            // >>> MOBİL <<<
             "(max-width: 768px)": function() {
-                // 1. Dolunay Sönmesi
                 gsap.to("canvas", {
                     scrollTrigger: { trigger: ".hero-container", start: "center center", end: "bottom top", scrub: true },
                     opacity: 0
                 });
-
-                // 2. Kartlar Yandan Fışkırma
                 gsap.utils.toArray('.mobile-card').forEach((el, i) => {
                     gsap.to(el, {
                         scrollTrigger: { trigger: el, start: "top 85%" },
                         x: 0, opacity: 1, duration: 0.8, ease: "power3.out", delay: i * 0.1
                     });
                 });
-
-                // 3. Bölümler Fade-in
                 gsap.utils.toArray('.mobile-fade').forEach(el => {
                     gsap.from(el, {
                         scrollTrigger: { trigger: el, start: "top 90%" },
